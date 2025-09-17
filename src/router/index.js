@@ -24,13 +24,13 @@ Aquí definimos las rutas disponibles en la app
 //Los imports dinamicos nos ayudan al lazy loading solo se cargaran cuando visiten las rutas y no desde el inicio esto mejorara la eficiencia y la carga de nuestra pagina
 
 const routes = [
-  { path: "/", component: () => import("../views/home/Home.vue") },
-  { 
-    path: "/user/:name", //definimos el path y los params ha recibir
-    name: "User", //nombre a la ruta como un atajo
-    component:  () => import("../views/user/user.vue"), //definimos el componente
-    props: true // como definimos props true los parametros los pasa automaticamente como props
-  } 
+  { path: "/", component: () => import("../views/Auth/Auth.vue") },
+  // { 
+  //   path: "/user/:name", //definimos el path y los params ha recibir
+  //   name: "User", //nombre a la ruta como un atajo
+  //   component:  () => import("../views/user/user.vue"), //definimos el componente
+  //   props: true // como definimos props true los parametros los pasa automaticamente como props
+  // } 
 ]
 
 // Creación del router
