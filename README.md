@@ -1,9 +1,9 @@
 ### Integrantes
 
 Gabriel Sanchez.
-Jhan Carlos Zamora.
-David Ruiz Caicedo.
-Jhon Neiver Valencia.
+Jhan Carlos Zamora**.
+David Ruiz Caicedo**.
+Jhon Neiver Valencia**.
 
 
 # 🚀 Proyecto Universitario - Aprendiendo Vue con Vite
