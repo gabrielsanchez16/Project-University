@@ -1,3 +1,11 @@
+###Integrantes
+
+Gabriel Sanchez
+Jhan Carlos Zamora
+David Ruiz Caicedo
+Jhon Neiver Valencia
+
+
 # 🚀 Proyecto Universitario - Aprendiendo Vue con Vite
 
 Este proyecto es el primer entregable de la materia, donde se muestra un **Hello World** en Vue 3 con Vite y TailwindCSS.  
