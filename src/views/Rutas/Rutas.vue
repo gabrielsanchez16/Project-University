@@ -47,7 +47,7 @@ onMounted(() => {
     });
 });
 
-// 📌 Generar ruta
+// 📌 Genera la  ruta
 async function generarRuta() {
     if (puntos.value.length < 2) {
         toast.error("Por favor selecciona al menos 2 puntos en el mapa.");
@@ -82,7 +82,7 @@ async function generarRuta() {
     }
 }
 
-// 📌 Dibujar ruta en el mapa
+// 📌 Dibuja la ruta en el mapa
 function dibujarRuta(route) {
     if (map.getSource("route")) {
         map.getSource("route").setData({
@@ -137,30 +137,71 @@ async function registrarRuta() {
         return;
     }
 
-    const coordsString = puntos.value.map((p) => p.join(",")).join(";");
-    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordsString}?geometries=geojson&overview=full&steps=false&access_token=${mapboxgl.accessToken}`;
+    try {
+        // Construir string de coordenadas para el request de Mapbox
+        const coordsString = puntos.value.map((p) => p.join(",")).join(";");
+        const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordsString}?geometries=geojson&overview=full&steps=false&access_token=${mapboxgl.accessToken}`;
 
-    const res = await fetch(url);
-    const data = await res.json();
-    const route = data.routes[0].geometry;
+        const res = await fetch(url);
+        const data = await res.json();
 
-    // Sacar inicio y fin
-    const inicio = puntos.value[0];
-    const fin = puntos.value[puntos.value.length - 1];
+        if (!data.routes || !data.routes.length) {
+            toast.error("No se pudo obtener la ruta desde Mapbox.");
+            return;
+        }
 
-    rutasRegistradas.value.push({
-        nombre: nombreRuta.value,
-        distancia: distancia.value,
-        duracion: duracion.value,
-        route: route,
-        inicio: inicio,
-        fin: fin,
-    });
+        const route = data.routes[0].geometry;
 
-    toast.success(`Ruta registrada: ${nombreRuta.value} ✅`);
-    modalOpen.value = false;
-    nombreRuta.value = "";
+        // Sacar inicio y fin
+        const inicio = puntos.value[0];
+        const fin = puntos.value[puntos.value.length - 1];
+
+        // // 📤 Construir payload con coordenadas
+        const payload = {
+            nombre_ruta: nombreRuta.value,
+            calles: puntos.value, // las coordenadas del mapa
+            perfil_id: "7726bb2d-023e-4838-845e-045cac6bc2ec", // cámbialo según corresponda
+            shape: "{\"type\":\"Polygon\",\"coordinates\":[[[1,2],[3,4],[5,6],[1,2]]]}"
+        };
+
+
+        // // 📡 Enviar a la API
+        const response = await fetch("http://apirecoleccion.gonzaloandreslucio.com/api/rutas", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            },
+            body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Error al registrar ruta:", errorData);
+            toast.error("Error al registrar la ruta en el servidor.");
+            return;
+        }
+
+        // Guardar localmente también
+        rutasRegistradas.value.push({
+            nombre: nombreRuta.value,
+            distancia: distancia.value,
+            duracion: duracion.value,
+            route: route,
+            inicio: inicio,
+            fin: fin,
+        });
+
+        toast.success(`Ruta registrada: ${nombreRuta.value} ✅`);
+        modalOpen.value = false;
+        nombreRuta.value = "";
+        resetearRuta();
+    } catch (error) {
+        console.error("Error general:", error);
+        toast.error("Ocurrió un error al registrar la ruta.");
+    }
 }
+
 
 // 📌 Visualizar ruta registrada
 function visualizarRuta(ruta) {
@@ -178,7 +219,7 @@ function formatCoords(coords) {
 </script>
 
 <template>
-    <Toast/>
+    <Toast />
     <div class="min-h-screen bg-gray-100 p-4 md:p-6">
         <h2 v-if="rutasRegistradas.length"
             class="text-2xl md:text-3xl font-bold text-gray-800 mb-4 text-center md:text-left">
