@@ -25,6 +25,15 @@ Aquí definimos las rutas disponibles en la app
 
 const routes = [
   { path: "/", component: () => import("../views/Auth/Auth.vue") },
+  {
+    path: "/",
+    component: () => import("../Layout/Sidebar.vue"),
+    children: [
+      { path: "Dashboard", component: () => import("../views/Dashboard/Dashboard.vue") },
+      { path: "Rutas", component: () => import("../views/Rutas/Rutas.vue") },
+      { path: "Camiones", component: () => import("../views/Camiones/Camiones.vue") }
+    ]
+  }
   // { 
   //   path: "/user/:name", //definimos el path y los params ha recibir
   //   name: "User", //nombre a la ruta como un atajo
