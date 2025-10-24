@@ -11,6 +11,7 @@ let map;
 
 const puntos = ref([]); // coordenadas actuales
 const markers = ref([]); // objetos Marker de Mapbox
+const geometry = ref({});
 const distancia = ref(null);
 const duracion = ref(null);
 const loading = ref(false);
@@ -45,6 +46,8 @@ onMounted(() => {
 
         markers.value.push(marker);
     });
+
+    obtenerRutas()
 });
 
 // 📌 Genera la  ruta
@@ -64,6 +67,7 @@ async function generarRuta() {
         const data = await res.json();
 
         const route = data.routes[0].geometry;
+        geometry.value = route;
         distancia.value = (data.routes[0].distance / 1000).toFixed(2);
         duracion.value = (data.routes[0].duration / 60).toFixed(1);
         duracion.value = (duracion.value * 6).toFixed(1);
@@ -120,6 +124,7 @@ function resetearRuta() {
     distancia.value = null;
     duracion.value = null;
     nombreRuta.value = "";
+    geometry.value = {};
 
     // Borrar markers
     markers.value.forEach((m) => m.remove());
@@ -159,9 +164,8 @@ async function registrarRuta() {
         // // 📤 Construir payload con coordenadas
         const payload = {
             nombre_ruta: nombreRuta.value,
-            calles: puntos.value, // las coordenadas del mapa
             perfil_id: "7726bb2d-023e-4838-845e-045cac6bc2ec", // cámbialo según corresponda
-            shape: "{\"type\":\"Polygon\",\"coordinates\":[[[1,2],[3,4],[5,6],[1,2]]]}"
+            shape: geometry.value
         };
 
 
@@ -183,14 +187,7 @@ async function registrarRuta() {
         }
 
         // Guardar localmente también
-        rutasRegistradas.value.push({
-            nombre: nombreRuta.value,
-            distancia: distancia.value,
-            duracion: duracion.value,
-            route: route,
-            inicio: inicio,
-            fin: fin,
-        });
+        obtenerRutas();
 
         toast.success(`Ruta registrada: ${nombreRuta.value} ✅`);
         modalOpen.value = false;
@@ -201,6 +198,45 @@ async function registrarRuta() {
         toast.error("Ocurrió un error al registrar la ruta.");
     }
 }
+
+async function obtenerRutas() {
+    try {
+        const res = await fetch(
+            "http://apirecoleccion.gonzaloandreslucio.com/api/rutas?perfil_id=7726bb2d-023e-4838-845e-045cac6bc2ec",
+            {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                },
+            }
+        );
+
+        const data = await res.json();
+
+
+        // Validar que existan rutas
+        if (!data || !data.data.length) {
+            toast.info("No hay rutas registradas.");
+            return;
+        }
+
+        // Convertir shape de string a objeto
+        rutasRegistradas.value = data?.data?.map((ruta) => ({
+            id: ruta.id,
+            nombre: ruta.nombre_ruta,
+            route: JSON.parse(ruta.shape),    // ← AQUÍ está la clave
+            inicio: JSON.parse(ruta.shape).coordinates[0][0],
+            fin: JSON.parse(ruta.shape).coordinates[0].slice(-1)[0],
+        }));
+
+        toast.success("Rutas cargadas correctamente ✅");
+    } catch (error) {
+        console.error("Error al obtener rutas:", error);
+        toast.error("Ocurrió un error al obtener las rutas.");
+    }
+}
+
 
 
 // 📌 Visualizar ruta registrada
@@ -226,28 +262,36 @@ function formatCoords(coords) {
             🗺️ Lista de Rutas
         </h2>
 
-        <!-- Lista de rutas registradas -->
-        <div v-if="rutasRegistradas.length" class="mb-6 bg-white p-4 rounded-lg shadow">
-            <h2 class="text-lg font-bold mb-3">📋 Rutas Registradas</h2>
-            <ul class="space-y-3">
-                <li v-for="(ruta, i) in rutasRegistradas" :key="i"
-                    class="flex flex-col md:flex-row md:items-center md:justify-between bg-gray-50 p-3 rounded-lg">
-                    <div>
-                        <p class="font-semibold">{{ ruta.nombre }}</p>
-                        <small class="text-gray-500 block">
-                            Distancia: {{ ruta.distancia }} km | Tiempo: {{ ruta.duracion }} min
-                        </small>
-                        <small class="text-gray-400 block">
-                            Inicio: {{ formatCoords(ruta.inicio) }} | Fin: {{ formatCoords(ruta.fin) }}
-                        </small>
-                    </div>
-                    <button @click="visualizarRuta(ruta)"
-                        class="mt-2 md:mt-0 px-3 py-1 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
-                        👁️ Visualizar
-                    </button>
-                </li>
-            </ul>
+        <div v-if="rutasRegistradas.length" class="mb-6 bg-white p-5 rounded-xl shadow-lg">
+            <h2 class="text-xl font-bold mb-4 text-indigo-700 flex items-center gap-2">
+                📋 Rutas Registradas ({{ rutasRegistradas.length }})
+            </h2>
+
+            <!-- CONTENEDOR CON SCROLL -->
+            <div class="max-h-80 overflow-y-auto pr-2 custom-scroll">
+                <ul class="space-y-4">
+                    <li v-for="(ruta, i) in rutasRegistradas" :key="i"
+                        class="flex flex-col md:flex-row md:items-center md:justify-between bg-gray-50 border border-gray-200 hover:border-indigo-400 hover:shadow-md transition-all p-4 rounded-lg">
+
+                        <div class="flex-1">
+                            <p class="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                                🛣️ {{ ruta.nombre }}
+                            </p>
+                            <small class="text-gray-500 block mt-1">
+                                📍 <strong>Inicio:</strong> {{ formatCoords(ruta.inicio) }} |
+                                🎯 <strong>Fin:</strong> {{ formatCoords(ruta.fin) }}
+                            </small>
+                        </div>
+
+                        <button @click="visualizarRuta(ruta)"
+                            class="mt-3 md:mt-0 px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg shadow hover:bg-indigo-700 hover:shadow-md transition-all">
+                            👁️ Visualizar
+                        </button>
+                    </li>
+                </ul>
+            </div>
         </div>
+
 
         <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4 text-center md:text-left">
             🗺️ Creador de Rutas
@@ -325,3 +369,20 @@ function formatCoords(coords) {
         </div>
     </div>
 </template>
+
+<style scoped>
+/* Scroll moderno */
+.custom-scroll::-webkit-scrollbar {
+    width: 8px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+    background-color: rgba(99, 102, 241, 0.6);
+    /* Indigo semi-transparente */
+    border-radius: 4px;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+}
+</style>
