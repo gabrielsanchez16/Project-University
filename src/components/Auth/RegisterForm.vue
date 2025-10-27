@@ -1,30 +1,53 @@
 <script setup>
-import { ref } from 'vue'
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 
-const showPassword = ref(false)
-const isLoading = ref(false)
-const error = ref('')
+const API = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
 const form = ref({
   nombre: '',
   apellido: '',
   correo: '',
   contraseña: '',
   perfil_id: '',
-})
+});
 
-const emit = defineEmits([ "update:isLogin"])
+const showPassword = ref(false);
+const isLoading = ref(false);
+const error = ref('');
 
-function handleSubmit(e) {
-  e.preventDefault()
-  isLoading.value = true
-  error.value = ''
+const emit = defineEmits([ "update:isLogin" ]);
 
-  // Simulación de envío
-  setTimeout(() => {
-    isLoading.value = false
-    console.log('Datos enviados:', form.value)
-    alert('Cuenta creada con éxito 🎉')
-  }, 1200)
+async function handleSubmit(e) {
+  e.preventDefault();
+  isLoading.value = true;
+  error.value = '';
+
+  try {
+    const res = await fetch(`${API}/api/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form.value)
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      error.value = data.error || 'Error creando cuenta';
+      isLoading.value = false;
+      return;
+    }
+
+    localStorage.setItem('auth', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+
+    emit('update:isLogin', true);
+    router.push('/Dashboard');
+  } catch (err) {
+    console.error(err);
+    error.value = 'Error de conexión';
+  } finally {
+    isLoading.value = false;
+  }
 }
 </script>
 
