@@ -48,12 +48,51 @@ const router = createRouter({
   routes
 })
 
+function isTokenValid(token) {
+  try {
+    const [, payload] = token.split(".");
+    const decoded = JSON.parse(atob(payload));
+    const now = Date.now() / 1000;
+    return decoded.exp && decoded.exp > now;
+  } catch {
+    return false;
+  }
+}
 
+
+
+// 🔐 Middleware de autenticación
 router.beforeEach((to, from, next) => {
-  const isAuth = localStorage.getItem("auth") //esto busca en el localstorage la auth
-  if (to.path !== "/" && !isAuth) next("/")
-  else next()
-})
+  const token = localStorage.getItem("auth");
+
+  // 🕒 Verificar si el token existe y es válido
+  if (!token || !isTokenValid(token)) {
+    localStorage.clear();
+    if (to.path !== "/") return next("/");
+    return next();
+  }
+
+  // 🚫 Si ya está autenticado e intenta ir al login
+  if (token && to.path === "/") {
+    return next("/Dashboard");
+  }
+
+  // ✅ En cualquier otro caso, permitir el acceso
+  next();
+});
+
+// 🧩 Función auxiliar para validar expiración del token
+function isTokenValid(token) {
+  try {
+    const [, payload] = token.split(".");
+    const decoded = JSON.parse(atob(payload));
+    const now = Date.now() / 1000; // tiempo actual en segundos
+    return decoded.exp && decoded.exp > now;
+  } catch {
+    return false; // si falla el decode o no tiene exp
+  }
+}
+
 
 
 export default router

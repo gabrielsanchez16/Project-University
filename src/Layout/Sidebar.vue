@@ -1,7 +1,13 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { RouterView, RouterLink, useRoute, useRouter } from "vue-router";
-import { ChartBarIcon, MapIcon, TruckIcon, ArrowLeftOnRectangleIcon } from "@heroicons/vue/24/outline";
+import {
+  ChartBarIcon,
+  MapIcon,
+  TruckIcon,
+  ArrowLeftOnRectangleIcon,
+  UserCircleIcon,
+} from "@heroicons/vue/24/outline";
 
 const sidebarOpen = ref(false);
 const route = useRoute();
@@ -12,6 +18,12 @@ const menu = [
   { name: "Rutas", icon: MapIcon, path: "/Rutas" },
   { name: "Camiones", icon: TruckIcon, path: "/Camiones" },
 ];
+
+// 🧠 Obtenemos usuario del localStorage
+const user = computed(() => {
+  const data = localStorage.getItem("user");
+  return data ? JSON.parse(data) : null;
+});
 
 const logout = () => {
   localStorage.clear(); // Limpia datos de sesión
@@ -29,6 +41,28 @@ const logout = () => {
         <h2 class="text-2xl font-extrabold mb-8 flex items-center gap-2 text-green-400">
           🌿 Ruta<span class="text-indigo-400">Limpia</span>
         </h2>
+
+        <!-- 🧍 Perfil de usuario -->
+        <div
+          v-if="user"
+          class="flex items-center gap-4 bg-white/10 rounded-2xl p-4 mb-6 border border-white/10"
+        >
+          <img
+            v-if="user.foto"
+            :src="user.foto"
+            alt="Foto de perfil"
+            class="w-12 h-12 rounded-full object-cover border-2 border-green-400"
+          />
+          <UserCircleIcon
+            v-else
+            class="w-12 h-12 text-gray-300 border-2 border-green-400 rounded-full"
+          />
+          <div class="text-sm">
+            <p class="font-semibold text-white">{{ user.nombre }} {{ user.apellido }}</p>
+            <p class="text-gray-400 text-xs">{{ user.correo }}</p>
+          </div>
+        </div>
+
         <nav class="flex flex-col gap-3">
           <RouterLink
             v-for="item in menu"
@@ -52,9 +86,9 @@ const logout = () => {
         <span class="font-medium">Cerrar sesión</span>
       </button>
     </aside>
-    <div class="hidden lg:flex lg:w-64">
 
-    </div>
+    <div class="hidden lg:flex lg:w-64"></div>
+
     <!-- Sidebar mobile overlay -->
     <div v-if="sidebarOpen" class="fixed inset-0 z-40 lg:hidden">
       <div class="absolute inset-0 bg-black/50" @click="sidebarOpen = false"></div>
@@ -71,6 +105,28 @@ const logout = () => {
           <h2 class="text-2xl font-extrabold mb-8 flex items-center gap-2 text-green-400">
             🌿 Ruta<span class="text-indigo-400">Limpia</span>
           </h2>
+
+          <!-- 👤 Perfil en móvil -->
+          <div
+            v-if="user"
+            class="flex items-center gap-4 bg-white/10 rounded-2xl p-4 mb-6 border border-white/10"
+          >
+            <img
+              v-if="user.foto"
+              :src="user.foto"
+              alt="Foto de perfil"
+              class="w-12 h-12 rounded-full object-cover border-2 border-green-400"
+            />
+            <UserCircleIcon
+              v-else
+              class="w-12 h-12 text-gray-300 border-2 border-green-400 rounded-full"
+            />
+            <div class="text-sm">
+              <p class="font-semibold text-white">{{ user.nombre }} {{ user.apellido }}</p>
+              <p class="text-gray-400 text-xs">{{ user.correo }}</p>
+            </div>
+          </div>
+
           <nav class="flex flex-col gap-3">
             <RouterLink
               v-for="item in menu"

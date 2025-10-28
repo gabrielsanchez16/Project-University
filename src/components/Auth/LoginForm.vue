@@ -56,6 +56,7 @@ async function handleSubmit(e) {
 
     // Guardar token y usuario
     localStorage.setItem('auth', data.token);
+    localStorage.setItem('id', JSON.stringify(data.user.perfil_id));
     localStorage.setItem('user', JSON.stringify(data.user));
 
     // Emitir hacia padre para cambiar la vista y redirigir
