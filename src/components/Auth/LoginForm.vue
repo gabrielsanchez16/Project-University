@@ -1,51 +1,72 @@
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive } from 'vue';
+import { useRouter } from 'vue-router';
+const router = useRouter();
+
+const API = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 // Estado del formulario
 const formData = reactive({
   correo: '',
   contraseña: ''
-})
+});
 
-const showPassword = ref(false)
-const loading = ref(false)
-const error = ref('')
-const formErrors = reactive({})
+const showPassword = ref(false);
+const loading = ref(false);
+const error = ref('');
+const formErrors = reactive({});
+
+const emit = defineEmits([ "update:isLogin" ]);
 
 /** Validar campos */
 function validateForm() {
-  const errors = {}
+  const errors = {};
   if (!formData.correo) {
-    errors.correo = 'El correo es obligatorio'
+    errors.correo = 'El correo es obligatorio';
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo)) {
-    errors.correo = 'El correo no es válido'
+    errors.correo = 'El correo no es válido';
   }
   if (!formData.contraseña) {
-    errors.contraseña = 'La contraseña es obligatoria'
+    errors.contraseña = 'La contraseña es obligatoria';
   }
-  Object.assign(formErrors, errors)
-  return Object.keys(errors).length === 0
+  Object.assign(formErrors, errors);
+  return Object.keys(errors).length === 0;
 }
 
-const emit = defineEmits([ "update:isLogin"])
-
 /** Enviar formulario */
-function handleSubmit(e) {
-  e.preventDefault()
-  if (!validateForm()) return
+async function handleSubmit(e) {
+  e.preventDefault();
+  if (!validateForm()) return;
 
-  error.value = ''
-  loading.value = true
+  error.value = '';
+  loading.value = true;
 
-  // Simulación de login
-  setTimeout(() => {
-    loading.value = false
-    if (formData.correo === 'admin@demo.com' && formData.contraseña === '123456') {
-      alert('¡Bienvenido 🎉!')
-    } else {
-      error.value = 'Correo o contraseña incorrectos'
+  try {
+    const res = await fetch(`${API}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ correo: formData.correo, contraseña: formData.contraseña })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      error.value = data.error || 'Correo o contraseña incorrectos';
+      loading.value = false;
+      return;
     }
-  }, 1200)
+
+    // Guardar token y usuario
+    localStorage.setItem('auth', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+
+    // Emitir hacia padre para cambiar la vista y redirigir
+    emit('update:isLogin', true);
+    router.push('/Dashboard');
+  } catch (err) {
+    console.error(err);
+    error.value = 'Error de conexión';
+  } finally {
+    loading.value = false;
+  }
 }
 </script>
 
