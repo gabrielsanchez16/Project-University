@@ -3,6 +3,9 @@ import { ref, onMounted } from "vue";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useToast } from "vue-toastification";
+import { useCounterStore } from "../../stores/counter";
+
+const globalStore = useCounterStore();
 
 const toast = useToast();
 
@@ -164,7 +167,7 @@ async function registrarRuta() {
         // // 📤 Construir payload con coordenadas
         const payload = {
             nombre_ruta: nombreRuta.value,
-            perfil_id: "7726bb2d-023e-4838-845e-045cac6bc2ec", // cámbialo según corresponda
+            perfil_id: globalStore.id,
             shape: geometry.value
         };
 
@@ -202,7 +205,7 @@ async function registrarRuta() {
 async function obtenerRutas() {
     try {
         const res = await fetch(
-            "http://apirecoleccion.gonzaloandreslucio.com/api/rutas?perfil_id=7726bb2d-023e-4838-845e-045cac6bc2ec",
+            `http://apirecoleccion.gonzaloandreslucio.com/api/rutas?perfil_id=${globalStore.id}`,
             {
                 method: "GET",
                 headers: {
@@ -230,7 +233,7 @@ async function obtenerRutas() {
             fin: JSON.parse(ruta.shape).coordinates[0].slice(-1)[0],
         }));
 
-        toast.success("Rutas cargadas correctamente ✅");
+    
     } catch (error) {
         console.error("Error al obtener rutas:", error);
         toast.error("Ocurrió un error al obtener las rutas.");

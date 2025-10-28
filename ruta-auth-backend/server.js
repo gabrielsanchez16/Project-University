@@ -45,10 +45,8 @@ app.post('/api/auth/register', async (req, res) => {
     const user = await prisma.user.create({
       data: { nombre, apellido, correo, contrasena: hashed, perfil_id }
     });
-
-    const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '8h' });
     const { contrasena: _, ...safe } = user;
-    res.json({ token, user: safe });
+    res.json({  user: safe });
   } catch (err) {
     console.error('REGISTER ERROR', err);
     res.status(500).json({ error: 'Error en el servidor' });

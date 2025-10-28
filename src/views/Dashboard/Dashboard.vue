@@ -1,14 +1,19 @@
 <script setup>
 import { ref, onMounted, nextTick } from "vue";
 import Chart from "chart.js/auto";
+import { useCounterStore } from "../../stores/counter";
+
 
 const rutas = ref(0);
 const camiones = ref(0);
+const globalStore = useCounterStore();
+
 
 const obtenerCamiones = async () => {
   try {
+
     const response = await fetch(
-      `http://apirecoleccion.gonzaloandreslucio.com/api/vehiculos?perfil_id=7726bb2d-023e-4838-845e-045cac6bc2ec`
+      `http://apirecoleccion.gonzaloandreslucio.com/api/vehiculos?perfil_id=${globalStore.id}`
     );
     const data = await response.json();
     camiones.value = data.data.length;
@@ -20,7 +25,7 @@ const obtenerCamiones = async () => {
 const obtenerRutas = async () => {
   try {
     const res = await fetch(
-      `http://apirecoleccion.gonzaloandreslucio.com/api/rutas?perfil_id=7726bb2d-023e-4838-845e-045cac6bc2ec`
+      `http://apirecoleccion.gonzaloandreslucio.com/api/rutas?perfil_id=${globalStore.id}`
     );
     const data = await res.json();
     rutas.value = data.data.length;
@@ -102,6 +107,12 @@ onMounted(async () => {
       <h1 class="text-4xl md:text-5xl font-extrabold text-green-700 flex items-center gap-3">
         🌿 RutaLimpia
       </h1>
+
+      <!-- 👋 Bienvenida personalizada -->
+      <p v-if="globalStore?.user?.nombre" class="mt-3 text-xl font-semibold text-green-600">
+        ¡Bienvenido, {{ globalStore.user.nombre }} {{ globalStore.user.apellido }}! 🌱
+      </p>
+
       <p class="mt-4 text-gray-600 text-lg leading-relaxed">
         <strong>RutaLimpia</strong> es un sistema diseñado para gestionar camiones de aseo urbano y
         las rutas de recolección de residuos en la ciudad. Su objetivo es mantener la ciudad limpia,
@@ -110,8 +121,7 @@ onMounted(async () => {
       </p>
       <div class="mt-4 flex flex-wrap gap-3">
         <span class="bg-green-100 text-green-700 px-4 py-1 rounded-full text-sm font-medium">♻ Gestión Ambiental</span>
-        <span class="bg-indigo-100 text-indigo-700 px-4 py-1 rounded-full text-sm font-medium">🛣 Control de
-          Rutas</span>
+        <span class="bg-indigo-100 text-indigo-700 px-4 py-1 rounded-full text-sm font-medium">🛣 Control de Rutas</span>
         <span class="bg-yellow-100 text-yellow-700 px-4 py-1 rounded-full text-sm font-medium">🚛 Vehículos</span>
       </div>
     </div>
@@ -157,6 +167,7 @@ onMounted(async () => {
       </div>
     </div>
   </div>
+
   <!-- Sección de gráficos -->
   <div class="bg-white rounded-3xl shadow-lg p-8 border border-gray-100 mt-10">
     <h2 class="text-2xl font-bold text-gray-700 mb-6 flex items-center gap-2">
@@ -170,5 +181,6 @@ onMounted(async () => {
     </div>
   </div>
 </template>
+
 
 <style scoped></style>

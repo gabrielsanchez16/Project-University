@@ -1,7 +1,10 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
+import { useCounterStore } from "../../stores/counter";
 
-const perfilId = "7726bb2d-023e-4838-845e-045cac6bc2ec";
+const globalStore = useCounterStore();
+
+const perfilId = globalStore.id;
 const apiUrl = "http://apirecoleccion.gonzaloandreslucio.com/api/vehiculos";
 
 const rutas = ref(18);

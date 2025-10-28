@@ -1,7 +1,7 @@
 {
   "name": "ruta-auth-backend",
   "version": "1.0.0",
-  "description": "Backend de autenticaci\u00f3n para RutaLimpia (Express + Prisma + MariaDB)",
+  "description": "Backend de autenticación para RutaLimpia (Express + Prisma + MariaDB)",
   "main": "server.js",
   "scripts": {
     "dev": "nodemon server.js",
@@ -10,6 +10,7 @@
   "author": "tu-usuario",
   "license": "MIT",
   "dependencies": {
+    "@prisma/adapter-mariadb": "^6.18.0",
     "@prisma/client": "^5.0.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",

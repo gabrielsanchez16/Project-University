@@ -37,11 +37,8 @@ async function handleSubmit(e) {
       return;
     }
 
-    localStorage.setItem('auth', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
-
     emit('update:isLogin', true);
-    router.push('/Dashboard');
+ 
   } catch (err) {
     console.error(err);
     error.value = 'Error de conexión';
