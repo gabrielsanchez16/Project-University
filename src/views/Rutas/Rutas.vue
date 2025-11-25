@@ -173,7 +173,7 @@ async function registrarRuta() {
 
 
         // // 📡 Enviar a la API
-        const response = await fetch("http://apirecoleccion.gonzaloandreslucio.com/api/rutas", {
+        const response = await fetch("https://apirecoleccion.gonzaloandreslucio.com/api/rutas", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -205,7 +205,7 @@ async function registrarRuta() {
 async function obtenerRutas() {
     try {
         const res = await fetch(
-            `http://apirecoleccion.gonzaloandreslucio.com/api/rutas?perfil_id=${globalStore.id}`,
+            `https://apirecoleccion.gonzaloandreslucio.com/api/rutas?perfil_id=${globalStore.id}`,
             {
                 method: "GET",
                 headers: {
