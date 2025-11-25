@@ -13,7 +13,7 @@ const obtenerCamiones = async () => {
   try {
 
     const response = await fetch(
-      `http://apirecoleccion.gonzaloandreslucio.com/api/vehiculos?perfil_id=${globalStore.id}`
+      `https://apirecoleccion.gonzaloandreslucio.com/api/vehiculos?perfil_id=${globalStore.id}`
     );
     const data = await response.json();
     camiones.value = data.data.length;
@@ -25,7 +25,7 @@ const obtenerCamiones = async () => {
 const obtenerRutas = async () => {
   try {
     const res = await fetch(
-      `http://apirecoleccion.gonzaloandreslucio.com/api/rutas?perfil_id=${globalStore.id}`
+      `https://apirecoleccion.gonzaloandreslucio.com/api/rutas?perfil_id=${globalStore.id}`
     );
     const data = await res.json();
     rutas.value = data.data.length;

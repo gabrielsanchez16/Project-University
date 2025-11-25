@@ -5,7 +5,7 @@ import { useCounterStore } from "../../stores/counter";
 const globalStore = useCounterStore();
 
 const perfilId = globalStore.id;
-const apiUrl = "http://apirecoleccion.gonzaloandreslucio.com/api/vehiculos";
+const apiUrl = "https://apirecoleccion.gonzaloandreslucio.com/api/vehiculos";
 
 const rutas = ref(18);
 const camiones = ref(0);

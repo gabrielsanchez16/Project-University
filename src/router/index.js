@@ -81,17 +81,7 @@ router.beforeEach((to, from, next) => {
   next();
 });
 
-// 🧩 Función auxiliar para validar expiración del token
-function isTokenValid(token) {
-  try {
-    const [, payload] = token.split(".");
-    const decoded = JSON.parse(atob(payload));
-    const now = Date.now() / 1000; // tiempo actual en segundos
-    return decoded.exp && decoded.exp > now;
-  } catch {
-    return false; // si falla el decode o no tiene exp
-  }
-}
+
 
 
 
