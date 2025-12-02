@@ -59,6 +59,8 @@
 
  - TailwindCSS / CSS (si aplica)
 
+ -Implementacion de PWA
+
 ### Backend
 
  - Node.js
@@ -70,6 +72,8 @@
  - bcrypt para encriptación de contraseñas
 
  - Base de datos (MongoDB, MySQL o la que uses) — puedes añadirla aquí
+
+ -Implementacion Mailtrap para notificaciones por correo para el mantenimiento de los vehiculos
 
 
 ---
@@ -125,11 +129,7 @@ npm run dev
 
 ## 🧩 Funcionalidades futuras (opcional)
 
- - Notificaciones cuando un vehículo requiera mantenimiento.
-
  - Dashboard con estadísticas de recolección.
-
- - Soporte para dispositivos móviles con PWA.
 
  - Integración con GPS en tiempo real.
 

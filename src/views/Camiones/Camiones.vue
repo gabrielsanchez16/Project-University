@@ -23,6 +23,8 @@ const nuevoCamion = ref({
 const editando = ref(false);
 const camionEditado = ref({ id: null, placa: "", modelo: "", marca: "", activo: false });
 
+console.log(globalStore.user)
+
 // ✅ Paginación
 const paginaActual = ref(1);
 const itemsPorPagina = 5;
@@ -100,6 +102,24 @@ const guardarEdicion = async () => {
   }
 };
 
+const sendMaintenanceEmail = async (model, plate, state) => {
+  try {
+    const email = globalStore.user.correo;
+    const response = await fetch('http://localhost:8000/api/mantenimiento', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model, plate, email, year: state ? "Activo" : "Inactivo" })
+    });
+
+    const data = await response.json();
+    confirm('Mantenimiento programado y correo enviado.');
+    console.log('Email sent successfully:', data);
+  } catch (error) {
+    console.error('Error sending maintenance email:', error);
+    alert('Error al programar mantenimiento.');
+  }
+};
+
 onMounted(() => {
   obtenerCamiones();
 });
@@ -143,6 +163,7 @@ onMounted(() => {
             <p class="text-gray-500 text-sm">Marca: {{ camion.marca }}</p>
             <p class="text-gray-500 text-sm">Modelo: {{ camion.modelo }}</p>
             <p class="text-gray-500 text-sm">Estado: {{ camion.activo ? 'Activo' : 'Inactivo' }}</p>
+            <button @click="sendMaintenanceEmail(camion.modelo, camion.placa, camion.activo)" class="bg-yellow-600 text-sm mt-1 text-white px-2 cursor-pointer py-2 rounded-lg">📧 Enviar Mantenimiento</button>
           </div>
           <div class="flex gap-2 mt-2 sm:mt-0">
             <button @click="activarEdicion(camion)" class="bg-blue-500 text-white px-4 py-2 rounded-lg">✏️

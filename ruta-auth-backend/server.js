@@ -4,9 +4,12 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
 const cors = require('cors');
+const { MailtrapClient } = require('mailtrap');
 
 const prisma = new PrismaClient();
 const app = express();
+
+const client = new MailtrapClient({ token: process.env.TOKEN_MAILTRAP });
 
 app.use(cors());
 app.use(express.json());
@@ -46,7 +49,7 @@ app.post('/api/auth/register', async (req, res) => {
       data: { nombre, apellido, correo, contrasena: hashed, perfil_id }
     });
     const { contrasena: _, ...safe } = user;
-    res.json({  user: safe });
+    res.json({ user: safe });
   } catch (err) {
     console.error('REGISTER ERROR', err);
     res.status(500).json({ error: 'Error en el servidor' });
@@ -87,6 +90,29 @@ app.get('/api/auth/me', authMiddleware, async (req, res) => {
     console.error('ME ERROR', err);
     res.status(500).json({ error: 'Error en el servidor' });
   }
+});
+
+app.post('/api/mantenimiento', async (req, res) => {
+  try {
+    const { model, plate, email, year } = req.body;
+    const SENDER_EMAIL = "noreply@systemworkshop.shop";
+    const RECIPIENT_EMAIL = email;
+    await client.send({
+      from: { name: "Aviso de Mantenimiento", email: SENDER_EMAIL },
+      to: [{ email: RECIPIENT_EMAIL }],
+      template_uuid: "5f2c6c87-338e-480f-a954-65397810bec7",
+      template_variables: {
+        part_name: model,
+        current_stock: plate,
+        min_stock: year
+      }
+    });
+    res.status(200).json({ message: 'Maintenance email sent successfully' });
+  } catch (error) {
+    console.error("Error sending maintenance email:", error.message);
+    res.status(500).json({ error: 'Error sending maintenance email' });
+  }
+
 });
 
 app.listen(PORT, () => console.log(`Auth server listening on port ${PORT}`));
