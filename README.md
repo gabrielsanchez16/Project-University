@@ -1,72 +1,150 @@
-### Integrantes
+## 🗺️ RutaLimpia
 
-- Gabriel Sanchez.
+### Sistema de gestión de rutas y administración de vehículos para camiones de basura en la ciudad de Buenaventura.
 
-- Jhan Carlos Zamora.
+ - RutaLimpia es una aplicación web diseñada para optimizar y administrar las rutas de recolección de residuos, así como los vehículos asignados a cada una. El sistema permite a los usuarios autorizados visualizar, crear y gestionar rutas mediante mapas interactivos, además de administrar la flota de camiones disponibles.
 
-- David Ruiz Caicedo.
-
-- Jhon Neiver Valencia.
-
-
-# 🚀 Proyecto Universitario - Aprendiendo Vue con Vite
-
-Este proyecto es el primer entregable de la materia, donde se muestra un **Hello World** en Vue 3 con Vite y TailwindCSS.  
-El objetivo es aprender la instalación, configuración básica y conocer más sobre el framework **Vue.js**.
+ - Este proyecto está construido con Vue.js en el frontend y Node.js + Express en el backend. Para la visualización geográfica se utiliza Mapbox, permitiendo trabajar con mapas dinámicos para la creación y edición de rutas.
 
 ---
 
-## 📖 Historia y Origen de Vue.js
+## 🚀 Características principales
 
-Vue.js fue creado en **2014** por **Evan You**, un ex-ingeniero de Google que trabajaba con AngularJS.  
-Su idea principal era tomar lo mejor de Angular (su enfoque declarativo) y hacerlo más **ligero, flexible y fácil de usar**.
+### 🗺️ Gestión de rutas
 
-Desde entonces, Vue se ha convertido en uno de los frameworks más populares de JavaScript, con una gran comunidad y soporte en todo el mundo.
+ - Creación y edición de rutas mediante Mapbox.
 
----
+ - Visualización de rutas existentes en tiempo real.
 
-## ⚖️ Diferencias frente a otros frameworks
+ - Asignación de camiones o vehículos a rutas específicas.
 
-- **Vue vs React**
-  - Vue es más **sencillo de aprender** gracias a su sintaxis basada en plantillas.
-  - React utiliza JSX (JavaScript + XML), lo que tiene una curva de aprendizaje más pronunciada.
-  - Vue ofrece **mejor integración progresiva**: puedes usarlo poco a poco en un proyecto ya existente.
+### 🚛 Administración de vehículos
 
-- **Vue vs Angular**
-  - Angular es un framework muy completo, pero también más **pesado y complejo**.
-  - Vue es más **ligero** y flexible.
-  - Vue tiene una curva de aprendizaje más amigable, mientras que Angular requiere aprender TypeScript, inyección de dependencias, etc.
+ - Listado de camiones con su información relevante.
 
----
+ - Estado de cada vehículo (activo, en mantenimiento, asignado, etc.).
 
-## ✅ Ventajas de Vue.js
+ - Asignación a rutas según disponibilidad.
 
-- Curva de aprendizaje baja: ideal para principiantes.
-- Sintaxis clara y basada en plantillas.
-- Reactividad automática con `ref` y `reactive`.
-- Comunidad activa y gran cantidad de documentación.
-- Integración progresiva: se puede usar en proyectos grandes o pequeños.
+### 🔐 Autenticación de usuarios
 
----
+ - Registro y login de usuarios mediante API REST creada con Express.
 
-## ⚠️ Desventajas de Vue.js
+ - Acceso restringido a rutas según credenciales.
 
-- Comunidad más pequeña que React (aunque muy activa).
-- Menor presencia en grandes empresas comparado con Angular/React.
-- Ecosistema menos maduro en algunas áreas (aunque esto ha mejorado mucho en Vue 3).
+ - Control de roles (si lo implementas): administrador, operador, supervisor, etc.
+
+### 🌎 Integración con Mapbox
+
+ - Mapas interactivos.
+
+ - Selección de coordenadas para construir rutas.
+
+ - Visualización amigable y moderna.
+
 
 ---
 
-## 🔧 Instalación y ejecución del proyecto
+## 🛠️ Tecnologías utilizadas
 
-1. Bajar el proyecto:
-   ```bash
-   git clone (url del proyecto)
+### Frontend
 
-2. Instalar:
-   ```bash
-   npm install
+ - Vue.js (composition API o options API)
 
-3. correr Proyecto:
-   ```bash
-   npm run dev
+ - Vue Router
+
+ - Axios
+
+ - Mapbox GL JS
+
+ - TailwindCSS / CSS (si aplica)
+
+### Backend
+
+ - Node.js
+
+ - Express.js
+
+ - JWT para autenticación (si lo incluiste)
+
+ - bcrypt para encriptación de contraseñas
+
+ - Base de datos (MongoDB, MySQL o la que uses) — puedes añadirla aquí
+
+
+---
+
+## 📦 Instalación y configuración
+
+### 🔧 Requisitos previos
+
+ - Asegúrate de tener instalado:
+
+ - Node.js v14+
+
+ - NPM o Yarn
+
+ - Acceso a un token de Mapbox
+
+ - Base de datos configurada
+
+## 🖥️ Instalación del backend
+```bash
+cd ruta-auth-backend
+npm install
+```
+
+### ⚙️ Variables de entorno
+
+### Crea un archivo .env con:
+
+```bash
+PORT=8000
+DATABASE_URL="mysql://u7062123429_gabodev3:UniversityProyect2@srv1894.hstgr.io:3306/u706568429_university"
+SHADOW_DATABASE_URL="mysql://u1111568429_gabodev4:UniversityProyect2@srv1894.hstgr.io:3306/u706568429_shadow_base"
+```
+
+### ▶️ Ejecutar backend
+```bash
+npm run dev
+```
+
+### 🌐 Instalación del frontend
+
+```bash
+npm install
+```
+
+### ▶️ Ejecutar frontend
+
+```bash
+npm run dev
+```
+
+---
+
+## 🧩 Funcionalidades futuras (opcional)
+
+ - Notificaciones cuando un vehículo requiera mantenimiento.
+
+ - Dashboard con estadísticas de recolección.
+
+ - Soporte para dispositivos móviles con PWA.
+
+ - Integración con GPS en tiempo real.
+
+---
+
+## 📄 Licencia
+
+ - Este proyecto puede funcionar con una licencia MIT o cualquier otra que prefieras.
+
+## 👨‍💻 Autores
+
+ - Gabriel Sanchez.
+
+ - Jhan Carlos Zamora.
+
+ - David Ruiz Caicedo.
+
+ -Jhon Neiver Valencia.
